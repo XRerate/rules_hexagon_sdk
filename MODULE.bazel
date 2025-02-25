@@ -5,3 +5,4 @@ module(
     repo_name = "rules_hexagon_sdk",
 )
 
+bazel_dep(name = "platforms", version = "0.0.10")
