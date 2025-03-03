@@ -6,6 +6,7 @@ def _hexagon_sdk_repository_impl(ctx):
     sdk_root = _get_envvar_or_fail(ctx, "HEXAGON_SDK_ROOT")
     tools_root = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_ROOT")
     arch = _get_envvar_or_fail(ctx, "HEXAGON_ARCH")
+    tools_version = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_VERSION")
 
     ctx.template(
         "hexagon_envvars.bzl",
@@ -13,6 +14,7 @@ def _hexagon_sdk_repository_impl(ctx):
         {
             "{HEXAGON_SDK_ROOT}": sdk_root,
             "{HEXAGON_TOOLS_ROOT}": tools_root,
+            "{HEXAGON_TOOLS_VERSION}": tools_version,
             "{HEXAGON_ARCH}": arch,
         },
         executable = False,

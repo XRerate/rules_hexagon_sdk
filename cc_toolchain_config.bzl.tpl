@@ -115,6 +115,7 @@ def hexagon_cc_toolchain_impl(ctx):
     HEXAGON_ARCH = ctx.var.get("HEXAGON_ARCH")
     HEXAGON_SDK_ROOT = ctx.var.get("HEXAGON_SDK_ROOT")
     HEXAGON_TOOLS_ROOT = ctx.var.get("HEXAGON_TOOLS_ROOT")
+    HEXAGON_TOOLS_VERSION = ctx.var.get("HEXAGON_TOOLS_VERSION")
     HEXAGON_TOOLCHAIN = HEXAGON_TOOLS_ROOT
     HEXAGON_LIB_DIR = "{}/Tools/target/hexagon/lib".format(HEXAGON_TOOLCHAIN)
     _QURT_INSTALL_DIR = "{}/rtos/qurt/compute{}".format(HEXAGON_SDK_ROOT, HEXAGON_ARCH)
