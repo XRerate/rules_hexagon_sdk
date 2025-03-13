@@ -1,6 +1,6 @@
 module(
     name = "rules_hexagon_sdk",
-    version = "0.1.0",
+    version = "0.0.2",
     compatibility_level = 1,
     repo_name = "rules_hexagon_sdk",
 )

@@ -7,18 +7,7 @@ def _hexagon_sdk_repository_impl(ctx):
     tools_root = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_ROOT")
     arch = _get_envvar_or_fail(ctx, "HEXAGON_ARCH")
     tools_version = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_VERSION")
-
-    ctx.template(
-        "build_defs.bzl",
-        ctx.attr._template_envvars,
-        {
-            "{HEXAGON_SDK_ROOT}": sdk_root,
-            "{HEXAGON_TOOLS_ROOT}": tools_root,
-            "{HEXAGON_TOOLS_VERSION}": tools_version,
-            "{HEXAGON_ARCH}": arch,
-        },
-        executable = False,
-    )
+    tools_arch_version = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_ARCH_VERSION")
 
     ctx.template(
         "hexagon_envvars.bzl",
@@ -26,9 +15,17 @@ def _hexagon_sdk_repository_impl(ctx):
         {
             "{HEXAGON_SDK_ROOT}": sdk_root,
             "{HEXAGON_TOOLS_ROOT}": tools_root,
-            "{HEXAGON_TOOLS_VERSION}": tools_version,
             "{HEXAGON_ARCH}": arch,
+            "{HEXAGON_TOOLS_VERSION}": tools_version,
+            "{HEXAGON_TOOLS_ARCH_VERSION}": tools_arch_version,
         },
+        executable = False,
+    )
+
+    ctx.template(
+        "build_defs.bzl",
+        ctx.attr._template_builddefs,
+        {},
         executable = False,
     )
 
@@ -69,6 +66,7 @@ hexagon_sdk_repository = repository_rule(
         "_template_sdk": attr.label(default = ":BUILD.hexagon_sdk.tpl", allow_single_file = True),
         "_template_envvars": attr.label(default = ":hexagon_envvars.bzl.tpl", allow_single_file = True),
         "_template_toolchain": attr.label(default = ":cc_toolchain_config.bzl.tpl", allow_single_file = True),
+        "_template_builddefs": attr.label(default = ":build_defs.bzl.tpl", allow_single_file = True),
     },
     implementation = _hexagon_sdk_repository_impl,
 )

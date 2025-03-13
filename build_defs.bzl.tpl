@@ -1,7 +1,7 @@
 """
 Hexagon SDK build definitions
 """
-load("//:hexagon_envvars.bzl", "HEXAGON_ARCH", "HEXAGON_SDK_ROOT", "HEXAGON_TOOLS_ROOT", "HEXAGON_TOOLS_VERSION")
+load("//:hexagon_envvars.bzl", "HEXAGON_ARCH", "HEXAGON_SDK_ROOT", "HEXAGON_TOOLS_ROOT", "HEXAGON_TOOLS_VERSION", "HEXAGON_TOOLS_ARCH_VERSION")
 
 def get_hexagon_linkopts(libraries):
     """
@@ -13,9 +13,10 @@ def get_hexagon_linkopts(libraries):
         A list of linker options with path for prebuilt libraries.
     """
     hexagon_sdk_root = HEXAGON_SDK_ROOT
+    hexagon_arch = HEXAGON_ARCH
     hexagon_tools_root = HEXAGON_TOOLS_ROOT
     hexagon_tools_version = HEXAGON_TOOLS_VERSION
-    hexagon_arch = HEXAGON_ARCH
+    hexagon_tools_arch_version = HEXAGON_TOOLS_ARCH_VERSION
 
     if type(libraries) == "string":
         libraries = [libraries]
@@ -35,7 +36,7 @@ def get_hexagon_linkopts(libraries):
             "{}/libs/qhl_hvx/prebuilt/hexagon_tool{}_{}/libqhmath_hvx.a".format(hexagon_sdk_root, hexagon_tools_version, hexagon_arch),
         ],
         "worker_pool_static": [
-            "{}/libs/worker_pool/prebuilt/hexagon_tool{}_v68/libworker_pool.a".format(hexagon_tools_version, hexagon_sdk_root),
+            "{}/libs/worker_pool/prebuilt/hexagon_tool{}_{}/libworker_pool.a".format(hexagon_sdk_root, hexagon_tools_version, hexagon_tools_arch_version),
         ],
     }
 
