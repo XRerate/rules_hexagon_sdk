@@ -1,7 +1,14 @@
 """
 Hexagon SDK build definitions
 """
-load("//:hexagon_envvars.bzl", "HEXAGON_ARCH", "HEXAGON_SDK_ROOT", "HEXAGON_TOOLS_ROOT", "HEXAGON_TOOLS_VERSION", "HEXAGON_TOOLS_ARCH_VERSION")
+load(
+    "//:hexagon_envvars.bzl", 
+    "HEXAGON_ARCH", 
+    "HEXAGON_SDK_ROOT", 
+    "HEXAGON_TOOLS_ROOT", 
+    "HEXAGON_TOOLS_VERSION", 
+    "HEXAGON_TOOLS_ARCH_VERSION",
+)
 
 def get_hexagon_linkopts(libraries):
     """
@@ -50,3 +57,23 @@ def get_hexagon_linkopts(libraries):
     else:
         return []
 
+QAIC_BIN = "{}/ipc/fastrpc/qaic/bin/qaic".format(HEXAGON_SDK_ROOT)
+QAIC_INCS = """\
+    -I{}/incs/ \
+    -I{}/incs/stddef/ \
+""".format(HEXAGON_SDK_ROOT, HEXAGON_SDK_ROOT)
+
+def hexagon_qaic_gen(
+    name,
+    srcs = [],
+    outs = [],
+    **kwargs
+):
+    native.genrule(
+        name = name,
+        srcs = srcs,
+        outs = outs,
+        cmd = "{} -mdll {} -o $(@D) $(SRCS)".format(QAIC_BIN, QAIC_INCS),
+        **kwargs
+    )
+    
