@@ -1,13 +1,13 @@
 """
 Hexagon SDK build definitions
 """
+
 load(
-    "//:hexagon_envvars.bzl", 
-    "HEXAGON_ARCH", 
-    "HEXAGON_SDK_ROOT", 
-    "HEXAGON_TOOLS_ROOT", 
-    "HEXAGON_TOOLS_VERSION", 
-    "HEXAGON_TOOLS_ARCH_VERSION",
+    "//:hexagon_envvars.bzl",
+    "HEXAGON_ARCH",
+    "HEXAGON_SDK_ROOT",
+    "HEXAGON_TOOLS_ROOT",
+    "HEXAGON_TOOLS_VERSION",
 )
 
 def get_hexagon_linkopts(libraries):
@@ -23,7 +23,6 @@ def get_hexagon_linkopts(libraries):
     hexagon_arch = HEXAGON_ARCH
     hexagon_tools_root = HEXAGON_TOOLS_ROOT
     hexagon_tools_version = HEXAGON_TOOLS_VERSION
-    hexagon_tools_arch_version = HEXAGON_TOOLS_ARCH_VERSION
 
     if type(libraries) == "string":
         libraries = [libraries]
@@ -43,7 +42,7 @@ def get_hexagon_linkopts(libraries):
             "{}/libs/qhl_hvx/prebuilt/hexagon_tool{}_{}/libqhmath_hvx.a".format(hexagon_sdk_root, hexagon_tools_version, hexagon_arch),
         ],
         "worker_pool_static": [
-            "{}/libs/worker_pool/prebuilt/hexagon_tool{}_{}/libworker_pool.a".format(hexagon_sdk_root, hexagon_tools_version, hexagon_tools_arch_version),
+            "{}/libs/worker_pool/prebuilt/hexagon_tool{}_{}/libworker_pool.a".format(hexagon_sdk_root, hexagon_tools_version, HEXAGON_ARCH),
         ],
     }
 
@@ -64,11 +63,10 @@ QAIC_INCS = """\
 """.format(HEXAGON_SDK_ROOT, HEXAGON_SDK_ROOT)
 
 def hexagon_qaic_gen(
-    name,
-    srcs = [],
-    outs = [],
-    **kwargs
-):
+        name,
+        srcs = [],
+        outs = [],
+        **kwargs):
     native.genrule(
         name = name,
         srcs = srcs,
@@ -76,4 +74,40 @@ def hexagon_qaic_gen(
         cmd = "{} -mdll {} -o $(@D) $(SRCS)".format(QAIC_BIN, QAIC_INCS),
         **kwargs
     )
-    
+
+def hexagon_cc_library(
+        name,
+        srcs = [],
+        hdrs = [],
+        deps = [],
+        **kwargs):
+    native.cc_library(
+        name = name,
+        srcs = srcs + [
+            "//:dsp_capabilities_utils_srcs",
+            "//:libcdsprpc",
+        ],
+        hdrs = hdrs,
+        deps = deps + [
+            "//:headers",
+        ],
+        **kwargs
+    )
+
+def hexagon_skel_library(
+        name,
+        srcs = [],
+        hdrs = [],
+        linkopts = [],
+        deps = [],
+        **kwargs):
+    native.cc_library(
+        name = name,
+        srcs = srcs,
+        hdrs = hdrs,
+        linkopts = linkopts + get_hexagon_linkopts([
+            "libcpp",
+        ]),
+        deps = deps,
+        **kwargs
+    )

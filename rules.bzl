@@ -7,7 +7,6 @@ def _hexagon_sdk_repository_impl(ctx):
     tools_root = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_ROOT")
     arch = _get_envvar_or_fail(ctx, "HEXAGON_ARCH")
     tools_version = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_VERSION")
-    tools_arch_version = _get_envvar_or_fail(ctx, "HEXAGON_TOOLS_ARCH_VERSION")
 
     ctx.template(
         "hexagon_envvars.bzl",
@@ -17,7 +16,6 @@ def _hexagon_sdk_repository_impl(ctx):
             "{HEXAGON_TOOLS_ROOT}": tools_root,
             "{HEXAGON_ARCH}": arch,
             "{HEXAGON_TOOLS_VERSION}": tools_version,
-            "{HEXAGON_TOOLS_ARCH_VERSION}": tools_arch_version,
         },
         executable = False,
     )
@@ -47,7 +45,7 @@ def _hexagon_sdk_repository_impl(ctx):
         sdk_root = sdk_root + "/"
 
     # Create synlinks to the SDK files.
-    target_dirs = ["incs", "ipc", "libs", "utils"]
+    target_dirs = ["incs", "ipc", "libs", "utils", "rtos"]
     for p in ctx.path(sdk_root).readdir():
         # p is path
         if p.basename not in target_dirs:

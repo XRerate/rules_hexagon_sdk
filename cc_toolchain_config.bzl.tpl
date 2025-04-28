@@ -16,18 +16,6 @@ all_link_actions = [
     ACTION_NAMES.cpp_link_nodeps_dynamic_library,
 ]
 
-dynamic_link_actions = [
-    ACTION_NAMES.cpp_link_executable,
-    ACTION_NAMES.cpp_link_dynamic_library,
-]
-
-static_link_actions = [
-    ACTION_NAMES.cpp_link_executable,
-    ACTION_NAMES.cpp_link_static_library,
-]
-
-
-
 def construct_hexagon_flags(v_arch, sdk_root, lib_root, toolchain_root, no_wrap_mem_api = False):
     qurt_install_dir = "{}/rtos/qurt/compute{}".format(sdk_root, v_arch)
     rtos_dir = qurt_install_dir
@@ -110,13 +98,11 @@ def construct_hexagon_flags(v_arch, sdk_root, lib_root, toolchain_root, no_wrap_
         "pic_shared_ld_flags": pic_shared_ld_flags,
     }
 
-def hexagon_cc_toolchain_impl(ctx):
-
+def hexagon_cc_toolchain_config_rule_impl(ctx):
     HEXAGON_ARCH = ctx.var.get("HEXAGON_ARCH")
     HEXAGON_SDK_ROOT = ctx.var.get("HEXAGON_SDK_ROOT")
     HEXAGON_TOOLS_ROOT = ctx.var.get("HEXAGON_TOOLS_ROOT")
-    HEXAGON_TOOLS_VERSION = ctx.var.get("HEXAGON_TOOLS_VERSION")
-    HEXAGON_TOOLS_ARCH_VERSION = ctx.var.get("HEXAGON_TOOLS_ARCH_VERSION")
+    HEXAGON_ARCH = ctx.var.get("HEXAGON_ARCH")
     HEXAGON_TOOLCHAIN = HEXAGON_TOOLS_ROOT
     HEXAGON_LIB_DIR = "{}/Tools/target/hexagon/lib".format(HEXAGON_TOOLCHAIN)
     _QURT_INSTALL_DIR = "{}/rtos/qurt/compute{}".format(HEXAGON_SDK_ROOT, HEXAGON_ARCH)
@@ -220,9 +206,10 @@ def hexagon_cc_toolchain_impl(ctx):
             _QURT_INSTALL_DIR + "/lib/pic",
             _QURT_INSTALL_DIR + "/lib",
             HEXAGON_LIB_DIR + "/pic",
-            HEXAGON_TOOLS_ROOT + "/Tools/target/hexagon/include/"
+            HEXAGON_TOOLS_ROOT + "/Tools/target/hexagon/include/",
+            HEXAGON_TOOLS_ROOT + "/Tools/target/hexagon/include/c++/v1",
         ],
-        toolchain_identifier = "hexagon_toolchain",
+        toolchain_identifier = ctx.attr.toolchain_identifier,
         host_system_name = "local",
         target_system_name = "local",
         target_cpu = "local",
@@ -234,8 +221,10 @@ def hexagon_cc_toolchain_impl(ctx):
     )
 
 
-cc_toolchain_config = rule(
-    implementation = hexagon_cc_toolchain_impl,
-    attrs = {},
+hexagon_cc_toolchain_config_rule = rule(
+    implementation = hexagon_cc_toolchain_config_rule_impl,
+    attrs = {
+        "toolchain_identifier": attr.string(mandatory = True),
+    },
     provides = [CcToolchainConfigInfo],
 )
